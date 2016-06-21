@@ -43,6 +43,10 @@ module FasterPath
   #def self.one_and_two
   #  Rust.one_and_two.to_a
   #end
+  
+  def self.entries(pth)
+    Rust.entries(pth).to_a
+  end
 
   private
   module Rust
@@ -74,6 +78,7 @@ module FasterPath
 
     # EXAMPLE
     #attach_function :one_and_two, [], FromRustArray.by_value
+    attach_function :entries, [ :string ], FromRustArray.by_value
   end
   private_constant :Rust
 end

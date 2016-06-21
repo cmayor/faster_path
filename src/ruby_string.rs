@@ -15,7 +15,7 @@ impl RubyString {
   #[allow(dead_code)]
   // FOR QUICK IMPLEMENTATION.  NOT FOR PRODUCTION.
   // SEE BENCHMARKS FOR SANCTIONED IMPLEMENTATION.
-  fn from_ruby(s: *const c_char) -> String {
+  pub fn from_ruby(s: *const c_char) -> String {
     let c_str = unsafe {
       assert!(!s.is_null());
       CStr::from_ptr(s)
@@ -26,7 +26,7 @@ impl RubyString {
   #[allow(dead_code)]
   // FOR QUICK IMPLEMENTATION.  NOT FOR PRODUCTION.
   // SEE BENCHMARKS FOR SANCTIONED IMPLEMENTATION.
-  fn to_ruby<S: Into<String>>(s: S) -> *const c_char {
+  pub fn to_ruby<S: Into<String>>(s: S) -> *const c_char {
     let r_str = s.into();
     let s_slice: &str = &r_str[..];
     CString::new(s_slice).unwrap().into_raw()
