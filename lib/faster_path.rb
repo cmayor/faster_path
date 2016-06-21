@@ -35,6 +35,10 @@ module FasterPath
     Rust.basename(pth, ext)
   end 
 
+  def self.dirname(pth)
+    Rust.dirname(pth)
+  end 
+
   def self.add_trailing_separator(pth)
     Rust.add_trailing_separator(pth)
   end
