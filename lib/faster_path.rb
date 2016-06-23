@@ -30,9 +30,20 @@ module FasterPath
   # WARNING! Pathname#chop_basename in STDLIB doesn't handle blank strings correctly!
   # This implementation correctly handles blank strings just as Pathname had intended
   # to handle non-path strings.
+  #def self.chop_basename(pth)
+  #  d,b = [Rust.dirname_for_chop(pth), Rust.basename_for_chop(pth)]
+  #  [d,b] unless Rust.both_are_blank(d,b)
+  #end
+
   def self.chop_basename(pth)
-    d,b = [Rust.dirname_for_chop(pth), Rust.basename_for_chop(pth)]
-    [d,b] unless Rust.both_are_blank(d,b)
+    ptr = FFI::MemoryPointer.new(:pointer, 1)
+    len = Rust.chop_basename(pth,ptr) # AugeasLib.aug_match(@aug, path, ptr)
+    #if (len < 0)
+    #  raise SystemCallError.new("Matching path expression '#{path}' failed")
+    #else
+      strPtr = ptr.read_pointer()
+      strPtr.null? ? nil : ptr.get_array_of_string(0, len).compact
+    #end
   end
 
   def self.blank?(str)
@@ -69,11 +80,9 @@ module FasterPath
     end
 
     class FromRustArray < FFI::Struct
-      layout :len,    :size_t, # dynamic array layout
-             :data,   :pointer #
-
+      layout :len, :size_t, :data, :pointer
       def to_a
-        self[:data].get_array_of_string(0, self[:len]).compact
+        self[:date].read_pointer().null? ? [] : self[:data].get_array_of_string(0, self[:len]).compact
       end
     end
 
@@ -90,6 +99,7 @@ module FasterPath
     attach_function :add_trailing_separator, [ :string ], :string
     attach_function :has_trailing_separator, [ :string ], :bool
     attach_function :extname, [ :string ], :string
+    attach_function :chop_basename, [:string, :pointer], :int
 
     # EXAMPLE
     #attach_function :one_and_two, [], FromRustArray.by_value
