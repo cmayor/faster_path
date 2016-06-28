@@ -30,7 +30,7 @@ pub extern fn chop_basename(string: *const c_char, pointr: *const c_void) -> siz
   ];
 
   unsafe {
-    ptr::copy_nonoverlapping(vectr.as_ptr() as *const c_void, pointr as *mut c_void, 1);
+    ptr::copy_nonoverlapping(vectr.as_ptr() as *const c_void, pointr as *mut c_void, vectr.len() as usize);
   }
   let len = vectr.len() as size_t;
   mem::forget(vectr);
